@@ -122,6 +122,25 @@ IF(MSVC)
     RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
 ENDIF()
 
+# UDF autoload regression test (issue #3406): verify that
+# nc_initialize() automatically loads UDF plugins configured in an RC
+# file, without an explicit NC_udf_load_plugins() call.
+add_executable(nc_test4_tst_udf_autoload tst_udf_autoload.c)
+target_link_libraries(nc_test4_tst_udf_autoload netcdf ${ALL_TLL_LIBS})
+target_compile_definitions(nc_test4_tst_udf_autoload PRIVATE
+  TEST_PLUGIN_PATH="$<TARGET_FILE:tst_udf_self_load_plugin>")
+add_test(nc_test4_tst_udf_autoload ${EXECUTABLE_OUTPUT_PATH}/nc_test4_tst_udf_autoload)
+set_tests_properties(nc_test4_tst_udf_autoload PROPERTIES
+  ENVIRONMENT srcdir=${CMAKE_CURRENT_SOURCE_DIR})
+add_dependencies(nc_test4_tst_udf_autoload tst_udf_self_load_plugin)
+IF(MSVC)
+  set_target_properties(nc_test4_tst_udf_autoload PROPERTIES
+    LINK_FLAGS_DEBUG " /NODEFAULTLIB:MSVCRT"
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG ${CMAKE_CURRENT_BINARY_DIR}
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE ${CMAKE_CURRENT_BINARY_DIR})
+ENDIF()
+
 # If the v2 API was built, add the test program.
 IF(ENABLE_V2_API)
   build_bin_test(tst_v2)

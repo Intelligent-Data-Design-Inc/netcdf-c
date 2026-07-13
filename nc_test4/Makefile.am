@@ -65,6 +65,11 @@ tst_udf_self_load_plugin_la_LIBADD = ${top_builddir}/liblib/libnetcdf.la
 # by configure.ac (see the case $host_os block after LT_INIT) so the
 # compiled-in TEST_PLUGIN_PATH always points to the correct filename.
 tst_udf_self_load_CPPFLAGS = $(AM_CPPFLAGS) -DTEST_PLUGIN_PATH=\"$(abs_builddir)/.libs/tst_udf_self_load_plugin@MODULE_EXT@\"
+# UDF autoload regression test (issue #3406): verify that
+# nc_initialize() automatically loads UDF plugins configured in an RC
+# file, without an explicit NC_udf_load_plugins() call.
+NC4_TESTS += tst_udf_autoload
+tst_udf_autoload_CPPFLAGS = $(AM_CPPFLAGS) -DTEST_PLUGIN_PATH=\"$(abs_builddir)/.libs/tst_udf_self_load_plugin@MODULE_EXT@\"
 endif # ENABLE_SHARED
 
 # Build test programs.
